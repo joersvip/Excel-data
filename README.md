@@ -74,72 +74,127 @@ project/
 
 ---
 
-## 💻 Cara Menjalankan Aplikasi Secara Lokal
+## 💻 Panduan Instalasi & Menjalankan Aplikasi
 
-### Prasyarat
-Pastikan komputer Anda sudah terinstal **Python 3.11 atau versi lebih baru (direkomendasikan Python 3.13)**.
+Aplikasi ini dapat dijalankan langsung menggunakan skrip otomatis yang telah disediakan khusus untuk lingkungan Linux, atau dijalankan secara manual pada sistem operasi lain (Windows/macOS).
 
-### Langkah-Langkah:
+### A. Cara Instan di Linux (Direkomendasikan)
 
-1. **Unduh atau Salin Proyek**:
-   Buka terminal/command prompt di direktori proyek ini.
+Kami telah menyertakan skrip shell (`.sh`) otomatis untuk memudahkan pengaturan lingkungan dan menjalankan aplikasi di sistem Linux Anda tanpa repot.
 
-2. **Buat Virtual Environment (Opsional namun Sangat Direkomendasikan)**:
+1. **Jalankan Aplikasi dengan Satu Perintah**:
+   Skrip ini akan mendeteksi Python, membuat Virtual Environment (`.venv`) otomatis, menginstal semua pustaka pendukung dari `requirements.txt`, menggenerasi aset grafis, dan langsung meluncurkan aplikasi:
    ```bash
-   python -m venv venv
+   ./run_linux.sh
    ```
 
-3. **Aktifkan Virtual Environment**:
-   - **Windows (CMD)**:
-     ```cmd
-     venv\Scripts\activate
-     ```
-   - **macOS / Linux**:
-     ```bash
-     source venv/bin/activate
-     ```
-
-4. **Instal Dependensi**:
+2. **Integrasi ke Menu Aplikasi Desktop Linux (Application Launcher)**:
+   Jika Anda ingin aplikasi ini muncul di menu pencarian sistem Linux Anda (seperti GNOME, KDE, XFCE) lengkap dengan logo ikonnya sehingga dapat diklik langsung tanpa membuka terminal:
    ```bash
-   pip install -r requirements.txt
+   ./install_desktop.sh
    ```
-
-5. **Jalankan Aplikasi**:
-   ```bash
-   python main.py
-   ```
-   *(Aplikasi akan otomatis mendeteksi ketiadaan data default dan membuat data dummy sebanyak 1.200 baris lengkap dengan kategori departemen, nominal gaji, penjualan, kota, dan avatar sehingga Anda dapat langsung mencobanya!)*
+   *Setelah skrip dijalankan, Anda dapat menekan tombol `Super/Windows` di keyboard Anda, mengetik **"Excel Data Center"**, dan langsung meluncurkannya dari sana.*
 
 ---
 
-## 📦 Panduan Build Menjadi File Executable (.exe)
+### B. Cara Manual (Semua OS: Windows, macOS, Linux)
 
-Anda dapat mengemas aplikasi Python ini menjadi satu berkas binary `.exe` mandiri yang dapat langsung diklik oleh pengguna akhir di Windows (bahkan tanpa harus menginstal Python di komputer mereka) menggunakan **PyInstaller**.
+Jika Anda ingin menjalankan atau mengatur lingkungan secara manual langkah demi langkah:
 
-### Langkah Kompilasi:
-
-1. Pastikan Anda berada dalam lingkungan virtual environment aktif dan semua dependensi terinstal.
-2. Jalankan perintah kompilasi PyInstaller berikut:
-
+1. **Buat Virtual Environment**:
    ```bash
-   pyinstaller --noconsole --onefile --add-data "assets;assets" --add-data "data;data" --name "ExcelDataCenter" main.py
+   python3 -m venv .venv
    ```
 
-   **Penjelasan Parameter Perintah:**
-   - `--noconsole`: Menyembunyikan jendela hitam terminal (command prompt) saat aplikasi dijalankan, sehingga murni memunculkan antarmuka grafis (GUI).
-   - `--onefile`: Membundel seluruh kode, pustaka, dan dependensi ke dalam satu file `.exe` tunggal di direktori `dist/`.
-   - `--add-data "assets;assets"`: Memasukkan seluruh aset statis (termasuk folder ekspor dan avatar) ke dalam paket executable.
-   - `--add-data "data;data"`: Menyertakan folder data Excel default bawaan ke dalam paket executable.
-   - `--name "ExcelDataCenter"`: Menamai file keluaran menjadi `ExcelDataCenter.exe`.
+2. **Aktifkan Virtual Environment**:
+   - **Windows (PowerShell)**:
+     ```powershell
+     .venv\Scripts\Activate.ps1
+     ```
+   - **Windows (CMD)**:
+     ```cmd
+     .venv\Scripts\activate.bat
+     ```
+   - **Linux / macOS**:
+     ```bash
+     source .venv/bin/activate
+     ```
 
-3. Setelah proses kompilasi selesai (sekitar 1-2 menit), silakan temukan file executable Anda di folder hasil keluaran:
-   `dist/ExcelDataCenter.exe`
+3. **Instal Dependensi**:
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   ```
 
-4. Anda dapat membagikan file `.exe` tersebut kepada pengguna lain. Mereka dapat menggunakannya langsung secara instan tanpa perlu koneksi internet.
+4. **Jalankan Skrip Pembuatan Aset**:
+   ```bash
+   python3 create_assets.py
+   ```
+
+5. **Luncurkan Aplikasi**:
+   ```bash
+   python3 main.py
+   ```
+
+---
+
+## 📦 Panduan Build/Kompilasi Menjadi Aplikasi Standalone
+
+Anda dapat membungkus seluruh aplikasi Python ini beserta semua pustakanya ke dalam sebuah file biner tunggal (*executable*) yang dapat dijalankan secara langsung tanpa perlu menginstal Python di komputer target.
+
+### 🐧 Mengemas di Lingkungan Linux
+Jalankan skrip kompilasi otomatis berikut:
+```bash
+./package_linux.sh
+```
+Skrip ini akan menggunakan PyInstaller untuk membuat paket biner mandiri. File executable biner Linux Anda akan berada di:
+📁 `dist/excel-data-center`
+
+### 🪟 Mengemas di Lingkungan Windows
+1. Aktifkan virtual environment Anda.
+2. Jalankan perintah kompilasi berikut di Command Prompt / PowerShell:
+   ```powershell
+   pyinstaller --noconsole --onefile --add-data "assets;assets" --add-data "data;data" --name "ExcelDataCenter" main.py
+   ```
+3. File executable Windows Anda akan berada di:
+   📁 `dist/ExcelDataCenter.exe`
+
+---
+
+## 📖 Panduan Penggunaan Aplikasi (User Guide)
+
+Aplikasi **Excel Data Center** dirancang dengan antarmuka yang sangat intuitif dan terdiri dari 4 menu navigasi utama di bagian samping kiri:
+
+### 1. 📊 Menu Dashboard
+Halaman ini memberikan ikhtisar visual instan mengenai berkas Excel yang sedang aktif:
+* **Informasi Berkas**: Menampilkan nama berkas, ukuran penyimpanan, total baris data, jumlah kolom, dan waktu terakhir diubah.
+* **Statistik Utama**: Menampilkan total nilai keuangan (akumulasi pagu), rata-rata anggaran, serta nilai transaksi tertinggi.
+* **Top Categories**: Menampilkan grafik representasi visual interaktif frekuensi data terbanyak berdasarkan jenis pengadaan atau satuan kerja.
+
+### 2. 🗂️ Menu Data Tabel (Pusat Data)
+Ini adalah area kerja utama untuk mengelola spreadsheet Anda:
+* **Pagination (Pengaturan Halaman)**: Di bagian bawah tabel, terdapat kontrol navigasi halaman. Anda dapat berpindah halaman dengan tombol `<` dan `>`, serta mengatur jumlah baris yang tampil per halaman (10, 25, 50, atau 100 baris) untuk memuat ratusan ribu data dengan sangat lancar.
+* **Pencarian Real-Time**: Ketik kata kunci apa saja pada kolom pencarian di bagian atas. Tabel akan menyaring baris secara otomatis saat Anda mengetik (*search-as-you-type*) tanpa memerlukan tombol submit.
+* **Filter Kolom & Pengurutan**: 
+  - Pilih kolom tertentu dari dropdown, kemudian pilih nilai unik yang ingin disaring. Nilai pada dropdown filter akan menyesuaikan secara dinamis dengan isi berkas Excel Anda.
+  - Klik tombol sortir untuk mengurutkan data secara Menaik (*Ascending*) atau Menurun (*Descending*).
+* **Impor Excel Baru**: Klik tombol **"Impor Excel"** di sudut kanan atas untuk membuka file browser lokal dan memuat data berkas `.xlsx` lainnya secara instan.
+* **Ekspor Data Terfilter**: Semua data yang sedang tampil di layar (sesuai hasil pencarian dan penyaringan Anda) dapat diekspor langsung menjadi file baru berformat **Excel (.xlsx)**, **CSV (.csv)**, atau **Laporan PDF Resmi** berdesain korporat dengan mengklik tombol ekspor yang relevan.
+
+### 3. 🔍 Panel Detail Master-Detail
+* Saat Anda mengklik baris mana saja pada tabel di halaman **Data**, sebuah panel rincian interaktif akan meluncur keluar dari sisi kanan layar.
+* Panel ini menyajikan rincian data lengkap dari baris yang Anda pilih secara rapi dan terstruktur.
+* Jika data Anda memuat kolom path gambar (misal foto pegawai atau foto barang), aplikasi akan memvisualisasikannya secara otomatis di bagian atas panel detail.
+
+### 4. ⚙️ Menu Pengaturan
+Sesuaikan aplikasi agar nyaman bagi produktivitas Anda:
+* **Skema Tema**: Aktifkan **Tema Gelap (Dark Mode)** untuk kenyamanan mata di malam hari, atau kembalikan ke **Tema Terang (Light Mode)**.
+* **Skala Teks (Font Size)**: Ubah ukuran tulisan di aplikasi menjadi Kecil, Sedang, atau Besar sesuai kenyamanan visual Anda.
+* **Berkas Default**: Tentukan lokasi file Excel default yang ingin selalu dibuka secara otomatis setiap kali aplikasi baru dijalankan.
 
 ---
 
 ## 🔒 Catatan Keamanan & Kepatuhan Data
 
-- **Keamanan Penuh**: EDC beroperasi sepenuhnya secara lokal di komputer klien. Data Anda tidak pernah diunggah ke internet atau server cloud pihak ketiga mana pun.
-- **Validasi Berkas Tangguh**: Aplikasi ini dilengkapi validasi otomatis yang mencegah program terhenti (*force close*) apabila berkas Excel yang dimasukkan rusak, memiliki format kolom tidak seragam, atau kosong.
+* **100% Offline & Lokal**: Aplikasi ini bekerja secara murni lokal di dalam komputer Anda. Tidak ada data yang diunggah ke internet, sehingga menjamin kerahasiaan data sensitif perusahaan Anda.
+* **Penanganan Kesalahan Kokoh**: EDC dilengkapi dengan validasi kolom cerdas. Jika file Excel Anda memiliki struktur kolom yang berantakan atau tidak seragam, aplikasi akan menanganinya secara aman tanpa terjadi *force close* (crash).

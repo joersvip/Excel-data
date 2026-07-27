@@ -28,8 +28,41 @@ class DataPage:
         self.sort_dir = "Ascending"
 
         # File Picker setup
-        self.file_picker = ft.FilePicker(on_result=self.on_file_selected)
+        self.file_picker = ft.FilePicker(
+            on_result=self.on_file_selected,
+            on_upload_progress=self.on_upload_progress
+        )
         self.page.overlay.append(self.file_picker)
+
+    def on_upload_progress(self, e: ft.FilePickerUploadEvent):
+        """Handle upload progress and trigger reload when finished."""
+        if e.progress == 1.0:
+            file_name = e.file_name
+            target_path = os.path.join("uploads", file_name)
+            try:
+                # Set active path and force reload
+                self.page.client_storage.set("excel_path", target_path)
+                ExcelReader.set_active_file_path(target_path)
+                ExcelReader.load_data(force_reload=True)
+                
+                # Reset filters and trigger refresh
+                self.reset_filters()
+                self.on_data_reloaded()
+                
+                # Show success SnackBar
+                self.page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Berhasil mengimpor {file_name}!", color=ft.Colors.WHITE),
+                    background_color=ft.Colors.GREEN_600
+                )
+                self.page.snack_bar.open = True
+                self.refresh_ui()
+            except Exception as ex:
+                self.page.snack_bar = ft.SnackBar(
+                    content=ft.Text(f"Gagal memuat file: {str(ex)}", color=ft.Colors.WHITE),
+                    background_color=ft.Colors.RED_600
+                )
+                self.page.snack_bar.open = True
+                self.page.update()
 
     def on_file_selected(self, e: ft.FilePickerResultEvent):
         """Handle new Excel file selection from FilePicker."""
@@ -56,38 +89,6 @@ class DataPage:
                     upload_url=self.page.get_upload_url(file.name, 600)
                 )]
             )
-            
-            # Save path where it will land
-            target_path = os.path.join("uploads", file.name)
-            # Cache file location in Client Storage
-            self.page.client_storage.set("excel_path", target_path)
-            ExcelReader.set_active_file_path(target_path)
-            
-            # Since uploading is async, we poll or use a slight timer. Flet FilePicker doesn't have 
-            # a direct on_upload_complete event easily accessible in all versions without upload progress.
-            # We will trigger the load of the file
-            def trigger_reload():
-                try:
-                    ExcelReader.load_data(force_reload=True)
-                    self.reset_filters()
-                    self.on_data_reloaded()
-                    self.page.snack_bar = ft.SnackBar(
-                        content=ft.Text(f"Berhasil mengimpor {file.name}!", color=ft.Colors.WHITE),
-                        background_color=ft.Colors.GREEN_600
-                    )
-                    self.page.snack_bar.open = True
-                    self.refresh_ui()
-                except Exception as ex:
-                    self.page.snack_bar = ft.SnackBar(
-                        content=ft.Text(f"Gagal memuat file: {str(ex)}", color=ft.Colors.WHITE),
-                        background_color=ft.Colors.RED_600
-                    )
-                    self.page.snack_bar.open = True
-                    self.page.update()
-
-            # Schedule reload after a brief delay for upload write completion
-            import threading
-            threading.Timer(1.5, trigger_reload).start()
         else:
             # Desktop mode - local path is directly accessible
             try:
