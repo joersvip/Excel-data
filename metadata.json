@@ -1,0 +1,8 @@
+{
+  "name": "Excel Data Center",
+  "description": "Aplikasi manajemen dan analisis data Microsoft Excel offline dengan antarmuka grafis Flet yang modern dan interaktif.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
