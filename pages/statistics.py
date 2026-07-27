@@ -229,7 +229,7 @@ class StatisticsPage:
         if self.selected_num_col and self.selected_num_col in df.columns:
             n_stats = get_numeric_stats(df, self.selected_num_col)
             
-            is_currency = "Gaji" in self.selected_num_col or "Penjualan" in self.selected_num_col
+            is_currency = "Gaji" in self.selected_num_col or "Penjualan" in self.selected_num_col or "Pagu" in self.selected_num_col
             
             def render_val(val):
                 return format_currency(val) if is_currency else f"{val:,.2f}".rstrip('0').rstrip('.')

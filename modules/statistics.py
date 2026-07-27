@@ -12,6 +12,9 @@ def analyze_columns(df: pd.DataFrame) -> Dict[str, Any]:
             
         # Check if numeric
         if pd.api.types.is_numeric_dtype(df[col]):
+            # Skip identifier columns like ID, No, Kode, etc. from descriptive statistics
+            if col.lower() in ["id", "no", "kode", "number", "nomor", "nik"]:
+                continue
             # If it has very few unique values, could be categorized, but we'll treat it as numeric if it is float/int
             numeric_cols.append(col)
         else:

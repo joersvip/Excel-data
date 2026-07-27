@@ -30,47 +30,77 @@ def ensure_sample_data(file_path: str) -> None:
     # Ensure parent directory exists
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
 
-    # Lists for random generation
-    first_names = ["Budi", "Andi", "Siti", "Dewi", "Rian", "Eko", "Joko", "Sari", "Laras", "Hendra", 
-                   "Aris", "Mega", "Dian", "Putri", "Rudi", "Ahmad", "Taufik", "Ina", "Yudi", "Rina"]
-    last_names = ["Santoso", "Wijaya", "Kusuma", "Pratama", "Hidayat", "Saputra", "Lestari", "Wulandari", 
-                  "Gunawan", "Setiawan", "Purnama", "Siregar", "Nasution", "Hadi", "Utomo", "Kartika"]
-    departments = ["Sales & Marketing", "Information Technology", "Human Resources", "Finance & Accounting", "Operations", "Legal"]
-    cities = ["Jakarta", "Surabaya", "Bandung", "Medan", "Semarang", "Makassar", "Yogyakarta", "Balikpapan", "Denpasar", "Palembang"]
-    statuses = ["Aktif", "Cuti", "Resign"]
+    # Try to build from the 4 CSV parts first (the user's actual dataset)
+    part1_path = "data/part1.csv"
+    if os.path.exists(part1_path):
+        try:
+            df1 = pd.read_csv(part1_path)
+            dfs = [df1]
+            for i in range(2, 5):
+                part_path = f"data/part{i}.csv"
+                if os.path.exists(part_path):
+                    df_part = pd.read_csv(part_path, header=None, names=df1.columns)
+                    dfs.append(df_part)
+            
+            df_merged = pd.concat(dfs, ignore_index=True)
+            df_merged['Pagu (Rp)'] = pd.to_numeric(df_merged['Pagu (Rp)'], errors='coerce')
+            df_merged['ID'] = pd.to_numeric(df_merged['ID'], errors='coerce')
+            df_merged['No'] = range(1, len(df_merged) + 1)
+            
+            df_merged.to_excel(file_path, index=False, engine='openpyxl')
+            return
+        except Exception as e:
+            print(f"Error rebuilding Excel from CSV parts: {str(e)}")
+
+    # Fallback: Generate 1000+ realistic procurement/RUP rows if CSVs are not found
+    pakets = [
+        "Pengadaan Alat Tulis Kantor", "Belanja Alat Listrik dan Elektronik",
+        "Pemeliharaan AC Ruang Kantor", "Belanja Bahan Komputer",
+        "Pengadaan Pakaian Dinas Harian", "Pembangunan Gedung Kantor",
+        "Sewa Kendaraan Operasional", "Belanja Jasa Kebersihan",
+        "Belanja Jasa Keamanan", "Sewa Mesin Fotokopi",
+        "Belanja Makanan dan Minuman Kegiatan", "Pengadaan Suku Cadang Kendaraan",
+        "Rehabilitasi Jalan Lingkungan", "Penyusunan Rencana Tata Ruang",
+        "Pengadaan Server Core IT", "Sewa Lisensi Cloud Antivirus"
+    ]
+    jenis_pengadaans = ["Barang", "Pekerjaan Konstruksi", "Jasa Lainnya", "Jasa Konsultansi"]
+    metodes = ["E-Purchasing", "Pengadaan Langsung", "Tender", "Penunjukan Langsung", "Tender Cepat"]
+    pdn_status = ["Produk Dalam Negeri", "Impor"]
+    usaha_kecil = ["Usaha Kecil/Koperasi", "Bukan Usaha Kecil"]
+    klpd_list = ["Kab. Barru", "Kementerian Kehakiman", "Mahkamah Agung", "Kementerian Keuangan", "Provinsi Sulawesi Selatan"]
+    satkers = ["BAGIAN UMUM", "DINAS KESEHATAN", "PENGADILAN NEGERI BARRU", "DINAS PENDIDIKAN", "BADAN KEUANGAN DAERAH"]
+    lokasis = ["Sulawesi Selatan, Barru (Kab.)", "Sulawesi Selatan, Makassar (Kota)", "DKI Jakarta, Jakarta Pusat"]
 
     data = []
-    start_date = datetime(2018, 1, 1)
-
-    for i in range(1, 1201):  # Generate 1200 rows of data
-        emp_id = f"EMP-{1000 + i}"
-        nama = f"{random.choice(first_names)} {random.choice(last_names)}"
-        dept = random.choice(departments)
-        gaji = random.randint(5000000, 25000000)
-        penjualan = random.randint(10000000, 150000000) if dept == "Sales & Marketing" else 0
-        tanggal = start_date + timedelta(days=random.randint(0, 2500))
-        status = random.choices(statuses, weights=[0.85, 0.10, 0.05])[0]
-        kota = random.choice(cities)
-        email = f"{nama.lower().replace(' ', '.')}@perusahaan.co.id"
-        
-        # We can put a path or URL for image
-        foto = f"assets/avatars/avatar_{(i % 5) + 1}.png"
+    for i in range(1, 1051):
+        paket_base = random.choice(pakets)
+        paket = f"{paket_base} - Paket {i}"
+        pagu = random.randint(1000000, 500000000)
+        jenis = random.choice(jenis_pengadaans)
+        pdn = random.choice(pdn_status)
+        uk = random.choice(usaha_kecil)
+        metode = random.choice(metodes)
+        waktu = f"January 2026"
+        klpd = random.choice(klpd_list)
+        satker = random.choice(satkers)
+        lokasi = random.choice(lokasis)
+        id_rup = random.randint(60000000, 69000000)
 
         data.append({
             "No": i,
-            "ID Karyawan": emp_id,
-            "Nama Lengkap": nama,
-            "Departemen": dept,
-            "Gaji (Rp)": gaji,
-            "Total Penjualan (Rp)": penjualan,
-            "Tanggal Masuk": tanggal.strftime("%Y-%m-%d"),
-            "Status Kerja": status,
-            "Email": email,
-            "Kota": kota,
-            "Foto": foto
+            "Paket": paket,
+            "Pagu (Rp)": pagu,
+            "Jenis Pengadaan": jenis,
+            "Produk Dalam Negeri": pdn,
+            "Usaha Kecil/Koperasi": uk,
+            "Metode": metode,
+            "Pemilihan": waktu,
+            "K/L/PD": klpd,
+            "Satuan Kerja": satker,
+            "Lokasi": lokasi,
+            "ID": id_rup
         })
 
     df = pd.DataFrame(data)
-    
-    # Save to Excel
     df.to_excel(file_path, index=False, engine='openpyxl')
+

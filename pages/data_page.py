@@ -362,7 +362,7 @@ class DataPage:
             for col in rendered_cols:
                 val = row[col]
                 # Format numbers nicely
-                if isinstance(val, (int, float)) and ("Gaji" in col or "Penjualan" in col):
+                if isinstance(val, (int, float)) and ("Gaji" in col or "Penjualan" in col or "Pagu" in col):
                     val_str = f"Rp {val:,.0f}".replace(",", ".")
                 elif isinstance(val, (datetime, pd.Timestamp)):
                     val_str = val.strftime("%d-%m-%Y")
@@ -405,10 +405,10 @@ class DataPage:
         )
 
         table_scroll_container = ft.Container(
-            content=ft.Row([
-                ft.Column([
+            content=ft.Column([
+                ft.Row([
                     data_table_control
-                ], scroll=ft.ScrollMode.ADAPTIVE, expand=True)
+                ], scroll=ft.ScrollMode.ADAPTIVE)
             ], scroll=ft.ScrollMode.ADAPTIVE, expand=True),
             border_radius=8,
             border=ft.border.all(1, border_color),

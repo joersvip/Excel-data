@@ -90,9 +90,9 @@ class DashboardPage:
                 avg_val = df[primary_num_col].mean()
                 max_val = df[primary_num_col].max()
                 
-                is_gaji_or_penjualan = "Gaji" in primary_num_col or "Penjualan" in primary_num_col
+                is_currency = "Gaji" in primary_num_col or "Penjualan" in primary_num_col or "Pagu" in primary_num_col
                 
-                if is_gaji_or_penjualan:
+                if is_currency:
                     total_str = format_currency(total_val)
                     avg_str = format_currency(avg_val)
                     max_str = format_currency(max_val)

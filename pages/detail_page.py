@@ -73,8 +73,8 @@ class DetailPage:
         detail_items = []
         
         # Display primary identifying info at top if available
-        primary_title = record.get("Nama Lengkap", record.get("Nama", ""))
-        primary_subtitle = record.get("ID Karyawan", record.get("ID", ""))
+        primary_title = record.get("Paket", record.get("Nama Lengkap", record.get("Nama", "")))
+        primary_subtitle = record.get("ID", record.get("ID Karyawan", ""))
         
         if primary_title:
             detail_items.append(
@@ -88,12 +88,12 @@ class DetailPage:
         # Show other fields
         grid_fields = []
         for col_name, value in record.items():
-            if col_name in ["Foto", "Nama Lengkap", "Nama", "ID Karyawan", "ID"]:
+            if col_name in ["Foto", "Nama Lengkap", "Nama", "ID Karyawan", "ID", "Paket"]:
                 continue  # Already handled or skipped
                 
             # Formatting values for beautiful display
             display_val = str(value)
-            if "Gaji" in col_name or "Penjualan" in col_name:
+            if "Gaji" in col_name or "Penjualan" in col_name or "Pagu" in col_name:
                 try:
                     display_val = format_currency(float(value))
                 except Exception:
@@ -129,6 +129,7 @@ class DetailPage:
                 ft.Divider(height=10, color=border_color),
                 ft.Column([
                     image_control if image_control else ft.Container(),
+                    ft.Column(detail_items) if detail_items else ft.Container(),
                     grid_container
                 ], horizontal_alignment=ft.CrossAxisAlignment.CENTER, scroll=ft.ScrollMode.ADAPTIVE, expand=True)
             ], spacing=10, expand=True)

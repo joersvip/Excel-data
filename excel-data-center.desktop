@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Excel Data Center
+Comment=Kelola dan Analisis Spreadsheet Excel Secara Offline
+Exec=APP_DIR/run_linux.sh
+Icon=APP_DIR/assets/logo.png
+Terminal=false
+Categories=Office;Database;Utility;
+Keywords=excel;data;viewer;statistics;offline;
+StartupNotify=true

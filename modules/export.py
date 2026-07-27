@@ -87,7 +87,7 @@ def export_to_pdf(df: pd.DataFrame, filename: str) -> str:
         for col in cols:
             val = row[col]
             # Clean display formatting
-            if isinstance(val, float) and ("Gaji" in col or "Penjualan" in col):
+            if isinstance(val, (int, float)) and ("Gaji" in col or "Penjualan" in col or "Pagu" in col):
                 val_str = f"Rp {val:,.0f}".replace(",", ".")
             elif isinstance(val, (datetime, pd.Timestamp)):
                 val_str = val.strftime("%d-%m-%Y")
